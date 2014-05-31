@@ -1,0 +1,10 @@
+DIST_FILENAME=CLApp
+DIST_TYPE=lib
+
+include ../Common/Makefile.mk
+
+INCLUDE+=../TensorMath/include
+INCLUDE+=../GLApp/include
+MACROS+=__CL_ENABLE_EXCEPTIONS
+MACROS+=__CL_OVERRIDE_ERROR_STRINGS
+
