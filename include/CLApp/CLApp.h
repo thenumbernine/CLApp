@@ -3,7 +3,11 @@
 #include "GLApp/GLApp.h"
 #include <OpenCL/cl.hpp>
 
-struct CLApp : public GLApp {
+namespace CLApp {
+
+struct CLApp : public ::GLApp::GLApp {
+	typedef ::GLApp::GLApp Super;
+
 	bool useGPU;	//whether we want to request the GPU or CPU.  must be set prior to init()
 	cl::Platform platform;
 	cl::Device device;
@@ -15,5 +19,7 @@ struct CLApp : public GLApp {
 	virtual cl::Device getDevice(cl::Platform platform);
 	
 	virtual void init();
+};
+
 };
 

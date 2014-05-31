@@ -1,10 +1,9 @@
 DIST_FILENAME=CLApp
 DIST_TYPE=lib
 
-include ../Common/Makefile.mk
-
-INCLUDE+=../TensorMath/include
-INCLUDE+=../GLApp/include
-MACROS+=__CL_ENABLE_EXCEPTIONS
-MACROS+=__CL_OVERRIDE_ERROR_STRINGS
+include ../Common/Base.mk
+include ../GLApp/Include.mk
+include ../TensorMath/Include.mk
+include ../CLApp/Include.mk
+# this is a library including libraries ... in which case their LDFLAGS might not be helpful
 

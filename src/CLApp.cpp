@@ -4,8 +4,12 @@
 #include <iostream>
 #include <sstream>
 
+using namespace Common;
+
+namespace CLApp {
+
 CLApp::CLApp()
-: GLApp()
+: Super()
 , useGPU(true)
 {}
 
@@ -250,4 +254,6 @@ void CLApp::init() {
 	context = cl::Context({device}, properties);
 	commands = cl::CommandQueue(context, device, CL_QUEUE_PROFILING_ENABLE);
 }
+
+};
 
