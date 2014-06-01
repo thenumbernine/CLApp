@@ -8,3 +8,5 @@ include ../CLApp/Include.mk
 # this is a library including libraries ... in which case their LDFLAGS might not be helpful
 LIBS=
 LIBPATHS=
+DYNAMIC_LIBS=
+STATIC_LIBS=
