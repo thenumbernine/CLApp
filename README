@@ -7,4 +7,4 @@ I might pick out the diamond inheritence stuff and allow for dual inheritence
 Depends on:
 - Common
 - GLApp
-- TensorMath
+- Tensor
