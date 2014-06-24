@@ -4,6 +4,8 @@
 #include <iostream>
 #include <sstream>
 
+#define PAIR(x)	x, #x
+
 namespace CLApp {
 
 CLApp::CLApp()
@@ -18,11 +20,11 @@ cl::Platform CLApp::getPlatform() {
 	for(cl::Platform &platform : platforms) {
 		std::cout << "platform " << platform() << std::endl;
 		std::vector<std::pair<cl_uint, const char *>> queries = {
-			std::pair<cl_uint, const char *>(CL_PLATFORM_NAME, "name"),
-			std::pair<cl_uint, const char *>(CL_PLATFORM_VENDOR, "vendor"),
-			std::pair<cl_uint, const char *>(CL_PLATFORM_VERSION, "version"),
-			std::pair<cl_uint, const char *>(CL_PLATFORM_PROFILE, "profile"),
-			std::pair<cl_uint, const char *>(CL_PLATFORM_EXTENSIONS, "extensions"),
+			std::pair<cl_uint, const char *>(PAIR(CL_PLATFORM_NAME)),
+			std::pair<cl_uint, const char *>(PAIR(CL_PLATFORM_VENDOR)),
+			std::pair<cl_uint, const char *>(PAIR(CL_PLATFORM_VERSION)),
+			std::pair<cl_uint, const char *>(PAIR(CL_PLATFORM_PROFILE)),
+			std::pair<cl_uint, const char *>(PAIR(CL_PLATFORM_EXTENSIONS)),
 		};
 		for (std::pair<cl_uint, const char *> &query : queries) {
 			std::string param;
@@ -114,14 +116,14 @@ struct DeviceParameterQueryEnumType_cl_device_fp_config : public DeviceParameter
 	using DeviceParameterQueryEnumType::DeviceParameterQueryEnumType;
 	virtual std::vector<std::pair<cl_device_fp_config, const char *>> getFlags() { 
 		return std::vector<std::pair<cl_device_fp_config, const char *>>{
-			std::pair<cl_device_fp_config, const char *>(CL_FP_DENORM, "CL_FP_DENORM - denorms are supported"),
-			std::pair<cl_device_fp_config, const char *>(CL_FP_INF_NAN, "CL_FP_INF_NAN - INF and NaNs are supported"),
-			std::pair<cl_device_fp_config, const char *>(CL_FP_ROUND_TO_NEAREST, "CL_FP_ROUND_TO_NEAREST - round to nearest even rounding mode supported"),
-			std::pair<cl_device_fp_config, const char *>(CL_FP_ROUND_TO_ZERO, "CL_FP_ROUND_TO_ZERO - round to zero rounding mode supported"),
-			std::pair<cl_device_fp_config, const char *>(CL_FP_ROUND_TO_INF, "CL_FP_ROUND_TO_INF - round to +ve and -ve infinity rounding modes supported"),
-			std::pair<cl_device_fp_config, const char *>(CL_FP_FMA, "CL_FP_FMA - IEEE754-20080 fused multiply-add is supported"),
-			std::pair<cl_device_fp_config, const char *>(CL_FP_SOFT_FLOAT, "CL_FP_SOFT_FLOAT"),
-			std::pair<cl_device_fp_config, const char *>(CL_FP_CORRECTLY_ROUNDED_DIVIDE_SQRT, "CL_FP_CORRECTLY_ROUNDED_DIVIDE_SQRT"),
+			std::pair<cl_device_fp_config, const char *>(PAIR(CL_FP_DENORM)),
+			std::pair<cl_device_fp_config, const char *>(PAIR(CL_FP_INF_NAN)),
+			std::pair<cl_device_fp_config, const char *>(PAIR(CL_FP_ROUND_TO_NEAREST)),
+			std::pair<cl_device_fp_config, const char *>(PAIR(CL_FP_ROUND_TO_ZERO)),
+			std::pair<cl_device_fp_config, const char *>(PAIR(CL_FP_ROUND_TO_INF)),
+			std::pair<cl_device_fp_config, const char *>(PAIR(CL_FP_FMA)),
+			std::pair<cl_device_fp_config, const char *>(PAIR(CL_FP_SOFT_FLOAT)),
+			std::pair<cl_device_fp_config, const char *>(PAIR(CL_FP_CORRECTLY_ROUNDED_DIVIDE_SQRT)),
 		};
 	}
 };
@@ -130,8 +132,8 @@ struct DeviceParameterQueryEnumType_cl_device_exec_capabilities : public DeviceP
 	using DeviceParameterQueryEnumType::DeviceParameterQueryEnumType;
 	virtual std::vector<std::pair<cl_device_exec_capabilities, const char *>> getFlags() { 
 		return std::vector<std::pair<cl_device_exec_capabilities, const char *>>{
-			std::pair<cl_device_exec_capabilities, const char *>(CL_EXEC_KERNEL, "CL_EXEC_KERNEL - The OpenCL device can execute OpenCL kernels"),
-			std::pair<cl_device_exec_capabilities, const char *>(CL_EXEC_NATIVE_KERNEL, "CL_EXEC_NATIVE_KERNEL - The OpenCL device can execute native kernels"),
+			std::pair<cl_device_exec_capabilities, const char *>(PAIR(CL_EXEC_KERNEL)),
+			std::pair<cl_device_exec_capabilities, const char *>(PAIR(CL_EXEC_NATIVE_KERNEL)),
 		};
 	}
 };
@@ -141,56 +143,56 @@ cl::Device CLApp::getDevice(cl::Platform platform) {
 	platform.getDevices(useGPU ? CL_DEVICE_TYPE_GPU : CL_DEVICE_TYPE_CPU, &devices);
 
 	std::vector<std::shared_ptr<DeviceParameterQuery>> deviceParameters = {
-		std::make_shared<DeviceParameterQueryType<char*>>(CL_DEVICE_NAME, "name"),
-		std::make_shared<DeviceParameterQueryType<char*>>(CL_DEVICE_VENDOR, "vendor"),
-		std::make_shared<DeviceParameterQueryType<char*>>(CL_DEVICE_VERSION, "version"),
-		std::make_shared<DeviceParameterQueryType<char*>>(CL_DRIVER_VERSION, "driver version"),
-		std::make_shared<DeviceParameterQueryType<cl_uint>>(CL_DEVICE_VENDOR_ID, "vendor id"),
-		std::make_shared<DeviceParameterQueryType<cl_platform_id>>(CL_DEVICE_PLATFORM, "platform id"),
-		std::make_shared<DeviceParameterQueryType<cl_bool>>(CL_DEVICE_AVAILABLE, "available?"),
-		std::make_shared<DeviceParameterQueryType<cl_bool>>(CL_DEVICE_COMPILER_AVAILABLE, "compiler available?"),
-		std::make_shared<DeviceParameterQueryType<cl_uint>>(CL_DEVICE_MAX_CLOCK_FREQUENCY, "max clock freq"),
-		std::make_shared<DeviceParameterQueryType<cl_uint>>(CL_DEVICE_MAX_COMPUTE_UNITS, "cores"),
-		std::make_shared<DeviceParameterQueryType<cl_device_type>>(CL_DEVICE_TYPE, "type"),
-		std::make_shared<DeviceParameterQueryEnumType_cl_device_fp_config>(CL_DEVICE_ADDRESS_BITS, "fp caps"),	//bitflags: 
-		std::make_shared<DeviceParameterQueryEnumType_cl_device_fp_config>(CL_DEVICE_HALF_FP_CONFIG, "half fp caps"),
-		std::make_shared<DeviceParameterQueryEnumType_cl_device_fp_config>(CL_DEVICE_SINGLE_FP_CONFIG, "single fp caps"),
-		std::make_shared<DeviceParameterQueryType<cl_bool>>(CL_DEVICE_ENDIAN_LITTLE, "little endian?"),
-		std::make_shared<DeviceParameterQueryEnumType_cl_device_exec_capabilities>(CL_DEVICE_EXECUTION_CAPABILITIES, "exec caps"),
-		std::make_shared<DeviceParameterQueryType<cl_uint>>(CL_DEVICE_ADDRESS_BITS, "address space size"),
-		std::make_shared<DeviceParameterQueryType<cl_ulong>>(CL_DEVICE_GLOBAL_MEM_SIZE, "global mem size"),
-		std::make_shared<DeviceParameterQueryType<cl_ulong>>(CL_DEVICE_GLOBAL_MEM_CACHE_SIZE, "global mem cache size"),
-		std::make_shared<DeviceParameterQueryType<cl_device_mem_cache_type>>(CL_DEVICE_GLOBAL_MEM_CACHE_TYPE, "global mem cache type"),	//CL_NONE, CL_READ_ONLY_CACHE, and CL_READ_WRITE_CACHE.
-		std::make_shared<DeviceParameterQueryType<cl_uint>>(CL_DEVICE_GLOBAL_MEM_CACHELINE_SIZE, "global mem cache line size"),
-		std::make_shared<DeviceParameterQueryType<cl_ulong>>(CL_DEVICE_LOCAL_MEM_SIZE, "local mem size"),
-		std::make_shared<DeviceParameterQueryType<cl_device_local_mem_type>>(CL_DEVICE_LOCAL_MEM_TYPE, "local mem type"),	//SRAM, or CL_GLOBAL
-		std::make_shared<DeviceParameterQueryType<cl_uint>>(CL_DEVICE_MEM_BASE_ADDR_ALIGN, "mem align"),
-		std::make_shared<DeviceParameterQueryType<cl_uint>>(CL_DEVICE_MIN_DATA_TYPE_ALIGN_SIZE, "data type align"),
-		std::make_shared<DeviceParameterQueryType<cl_bool>>(CL_DEVICE_IMAGE_SUPPORT, "image support?"),
-		std::make_shared<DeviceParameterQueryType<size_t>>(CL_DEVICE_IMAGE2D_MAX_WIDTH, "image2d max width"),
-		std::make_shared<DeviceParameterQueryType<size_t>>(CL_DEVICE_IMAGE2D_MAX_HEIGHT, "image2d max height"),
-		std::make_shared<DeviceParameterQueryType<size_t>>(CL_DEVICE_IMAGE3D_MAX_WIDTH, "image3d max width"),
-		std::make_shared<DeviceParameterQueryType<size_t>>(CL_DEVICE_IMAGE3D_MAX_HEIGHT, "image3d max height"),
-		std::make_shared<DeviceParameterQueryType<size_t>>(CL_DEVICE_IMAGE3D_MAX_DEPTH, "image3d max depth"),
-		std::make_shared<DeviceParameterQueryType<cl_uint>>(CL_DEVICE_MAX_CONSTANT_ARGS, "max __constant args"),
-		std::make_shared<DeviceParameterQueryType<cl_uint>>(CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE, "max __constant buffer size"),
-		std::make_shared<DeviceParameterQueryType<cl_ulong>>(CL_DEVICE_MAX_MEM_ALLOC_SIZE, "max mem alloc size"),
-		std::make_shared<DeviceParameterQueryType<size_t>>(CL_DEVICE_MAX_PARAMETER_SIZE, "max param size"),
-		std::make_shared<DeviceParameterQueryType<cl_uint>>(CL_DEVICE_MAX_READ_IMAGE_ARGS, "max read image objs"),
-		std::make_shared<DeviceParameterQueryType<cl_uint>>(CL_DEVICE_MAX_WRITE_IMAGE_ARGS, "max write image objs"),
-		std::make_shared<DeviceParameterQueryType<cl_uint>>(CL_DEVICE_MAX_SAMPLERS, "max samplers"),
-		std::make_shared<DeviceParameterQueryType<cl_uint>>(CL_DEVICE_PREFERRED_VECTOR_WIDTH_CHAR, "preferred char vector width"),
-		std::make_shared<DeviceParameterQueryType<cl_uint>>(CL_DEVICE_PREFERRED_VECTOR_WIDTH_SHORT, "preferred short vector width"),
-		std::make_shared<DeviceParameterQueryType<cl_uint>>(CL_DEVICE_PREFERRED_VECTOR_WIDTH_INT, "preferred int vector width"),
-		std::make_shared<DeviceParameterQueryType<cl_uint>>(CL_DEVICE_PREFERRED_VECTOR_WIDTH_LONG, "preferred long vector width"),
-		std::make_shared<DeviceParameterQueryType<cl_uint>>(CL_DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT, "preferred float vector width"),
-		std::make_shared<DeviceParameterQueryType<cl_uint>>(CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE, "preferred double vector width"),
-		std::make_shared<DeviceParameterQueryType<size_t>>(CL_DEVICE_MAX_WORK_GROUP_SIZE, "max items in work-group"),
-		std::make_shared<DeviceParameterQueryType<cl_uint>>(CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS, "max work item dim"),
-		std::make_shared<DeviceParameterQueryType<Tensor::Vector<size_t,3>>>(CL_DEVICE_MAX_WORK_ITEM_SIZES, "max work item sizes"),
-		std::make_shared<DeviceParameterQueryType<char*>>(CL_DEVICE_PROFILE, "profile"),
-		std::make_shared<DeviceParameterQueryType<size_t>>(CL_DEVICE_PROFILING_TIMER_RESOLUTION, "profile timer resolution"),
-		std::make_shared<DeviceParameterQueryType<cl_command_queue_properties>>(CL_DEVICE_QUEUE_PROPERTIES, "command-queue properties"),
+		std::make_shared<DeviceParameterQueryType<char*>>(PAIR(CL_DEVICE_NAME)),
+		std::make_shared<DeviceParameterQueryType<char*>>(PAIR(CL_DEVICE_VENDOR)),
+		std::make_shared<DeviceParameterQueryType<char*>>(PAIR(CL_DEVICE_VERSION)),
+		std::make_shared<DeviceParameterQueryType<char*>>(PAIR(CL_DRIVER_VERSION)),
+		std::make_shared<DeviceParameterQueryType<cl_uint>>(PAIR(CL_DEVICE_VENDOR_ID)),
+		std::make_shared<DeviceParameterQueryType<cl_platform_id>>(PAIR(CL_DEVICE_PLATFORM)),
+		std::make_shared<DeviceParameterQueryType<cl_bool>>(PAIR(CL_DEVICE_AVAILABLE)),
+		std::make_shared<DeviceParameterQueryType<cl_bool>>(PAIR(CL_DEVICE_COMPILER_AVAILABLE)),
+		std::make_shared<DeviceParameterQueryType<cl_uint>>(PAIR(CL_DEVICE_MAX_CLOCK_FREQUENCY)),
+		std::make_shared<DeviceParameterQueryType<cl_uint>>(PAIR(CL_DEVICE_MAX_COMPUTE_UNITS)),
+		std::make_shared<DeviceParameterQueryType<cl_device_type>>(PAIR(CL_DEVICE_TYPE)),
+		std::make_shared<DeviceParameterQueryEnumType_cl_device_fp_config>(PAIR(CL_DEVICE_ADDRESS_BITS)),	//bitflags: 
+		std::make_shared<DeviceParameterQueryEnumType_cl_device_fp_config>(PAIR(CL_DEVICE_HALF_FP_CONFIG)),
+		std::make_shared<DeviceParameterQueryEnumType_cl_device_fp_config>(PAIR(CL_DEVICE_SINGLE_FP_CONFIG)),
+		std::make_shared<DeviceParameterQueryType<cl_bool>>(PAIR(CL_DEVICE_ENDIAN_LITTLE)),
+		std::make_shared<DeviceParameterQueryEnumType_cl_device_exec_capabilities>(PAIR(CL_DEVICE_EXECUTION_CAPABILITIES)),
+		std::make_shared<DeviceParameterQueryType<cl_uint>>(PAIR(CL_DEVICE_ADDRESS_BITS)),
+		std::make_shared<DeviceParameterQueryType<cl_ulong>>(PAIR(CL_DEVICE_GLOBAL_MEM_SIZE)),
+		std::make_shared<DeviceParameterQueryType<cl_ulong>>(PAIR(CL_DEVICE_GLOBAL_MEM_CACHE_SIZE)),
+		std::make_shared<DeviceParameterQueryType<cl_device_mem_cache_type>>(PAIR(CL_DEVICE_GLOBAL_MEM_CACHE_TYPE)),	//CL_NONE, CL_READ_ONLY_CACHE, and CL_READ_WRITE_CACHE.
+		std::make_shared<DeviceParameterQueryType<cl_uint>>(PAIR(CL_DEVICE_GLOBAL_MEM_CACHELINE_SIZE)),
+		std::make_shared<DeviceParameterQueryType<cl_ulong>>(PAIR(CL_DEVICE_LOCAL_MEM_SIZE)),
+		std::make_shared<DeviceParameterQueryType<cl_device_local_mem_type>>(PAIR(CL_DEVICE_LOCAL_MEM_TYPE)),	//SRAM, or CL_GLOBAL
+		std::make_shared<DeviceParameterQueryType<cl_uint>>(PAIR(CL_DEVICE_MEM_BASE_ADDR_ALIGN)),
+		std::make_shared<DeviceParameterQueryType<cl_uint>>(PAIR(CL_DEVICE_MIN_DATA_TYPE_ALIGN_SIZE)),
+		std::make_shared<DeviceParameterQueryType<cl_bool>>(PAIR(CL_DEVICE_IMAGE_SUPPORT)),
+		std::make_shared<DeviceParameterQueryType<size_t>>(PAIR(CL_DEVICE_IMAGE2D_MAX_WIDTH)),
+		std::make_shared<DeviceParameterQueryType<size_t>>(PAIR(CL_DEVICE_IMAGE2D_MAX_HEIGHT)),
+		std::make_shared<DeviceParameterQueryType<size_t>>(PAIR(CL_DEVICE_IMAGE3D_MAX_WIDTH)),
+		std::make_shared<DeviceParameterQueryType<size_t>>(PAIR(CL_DEVICE_IMAGE3D_MAX_HEIGHT)),
+		std::make_shared<DeviceParameterQueryType<size_t>>(PAIR(CL_DEVICE_IMAGE3D_MAX_DEPTH)),
+		std::make_shared<DeviceParameterQueryType<cl_uint>>(PAIR(CL_DEVICE_MAX_CONSTANT_ARGS)),
+		std::make_shared<DeviceParameterQueryType<cl_uint>>(PAIR(CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE)),
+		std::make_shared<DeviceParameterQueryType<cl_ulong>>(PAIR(CL_DEVICE_MAX_MEM_ALLOC_SIZE)),
+		std::make_shared<DeviceParameterQueryType<size_t>>(PAIR(CL_DEVICE_MAX_PARAMETER_SIZE)),
+		std::make_shared<DeviceParameterQueryType<cl_uint>>(PAIR(CL_DEVICE_MAX_READ_IMAGE_ARGS)),
+		std::make_shared<DeviceParameterQueryType<cl_uint>>(PAIR(CL_DEVICE_MAX_WRITE_IMAGE_ARGS)),
+		std::make_shared<DeviceParameterQueryType<cl_uint>>(PAIR(CL_DEVICE_MAX_SAMPLERS)),
+		std::make_shared<DeviceParameterQueryType<cl_uint>>(PAIR(CL_DEVICE_PREFERRED_VECTOR_WIDTH_CHAR)),
+		std::make_shared<DeviceParameterQueryType<cl_uint>>(PAIR(CL_DEVICE_PREFERRED_VECTOR_WIDTH_SHORT)),
+		std::make_shared<DeviceParameterQueryType<cl_uint>>(PAIR(CL_DEVICE_PREFERRED_VECTOR_WIDTH_INT)),
+		std::make_shared<DeviceParameterQueryType<cl_uint>>(PAIR(CL_DEVICE_PREFERRED_VECTOR_WIDTH_LONG)),
+		std::make_shared<DeviceParameterQueryType<cl_uint>>(PAIR(CL_DEVICE_PREFERRED_VECTOR_WIDTH_FLOAT)),
+		std::make_shared<DeviceParameterQueryType<cl_uint>>(PAIR(CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE)),
+		std::make_shared<DeviceParameterQueryType<size_t>>(PAIR(CL_DEVICE_MAX_WORK_GROUP_SIZE)),
+		std::make_shared<DeviceParameterQueryType<cl_uint>>(PAIR(CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS)),
+		std::make_shared<DeviceParameterQueryType<Tensor::Vector<size_t,3>>>(PAIR(CL_DEVICE_MAX_WORK_ITEM_SIZES)),
+		std::make_shared<DeviceParameterQueryType<char*>>(PAIR(CL_DEVICE_PROFILE)),
+		std::make_shared<DeviceParameterQueryType<size_t>>(PAIR(CL_DEVICE_PROFILING_TIMER_RESOLUTION)),
+		std::make_shared<DeviceParameterQueryType<cl_command_queue_properties>>(PAIR(CL_DEVICE_QUEUE_PROPERTIES)),
 		//std::make_shared<DeviceParameterQueryType<char*>>(CL_DEVICE_EXTENSIONS, "extensions"),
 	};
 
@@ -209,7 +211,7 @@ cl::Device CLApp::getDevice(cl::Platform platform) {
 		std::vector<std::string> extensions;
 		std::copy(std::istream_iterator<std::string>(iss), std::istream_iterator<std::string>(), std::back_inserter<std::vector<std::string>>(extensions));
 
-		std::cout << "extensions:" << std::endl;
+		std::cout << "CL_DEVICE_EXTENSIONS:" << std::endl;
 		for (std::string &s : extensions) {
 			std::cout << "\t" << s << std::endl;
 		}
