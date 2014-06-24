@@ -4,8 +4,6 @@
 #include <iostream>
 #include <sstream>
 
-using namespace Common;
-
 namespace CLApp {
 
 CLApp::CLApp()
@@ -226,7 +224,7 @@ cl::Device CLApp::getDevice(cl::Platform platform) {
 	 
 		return extension != extensions.end();
 	});
-	if (deviceIter == devices.end()) throw Exception() << "failed to find a device capable of GL sharing";
+	if (deviceIter == devices.end()) throw Common::Exception() << "failed to find a device capable of GL sharing";
 	return *deviceIter;
 }
 
