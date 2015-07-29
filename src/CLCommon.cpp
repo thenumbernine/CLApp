@@ -1,4 +1,4 @@
-#include "CLApp/CLApp.h"
+#include "CLCommon/CLCommon.h"
 #include "Tensor/Vector.h"
 #include "Common/Exception.h"
 #include <iostream>
@@ -6,14 +6,36 @@
 
 #define PAIR(x)	x, #x
 
-namespace CLApp {
+namespace CLCommon {
 
-CLApp::CLApp()
-: Super()
-, useGPU(true)
-{}
+CLCommon::CLCommon(bool useGPU_)
+: useGPU(useGPU_)
+{
+	platform = getPlatform();
+	device = getDevice(platform);
 
-cl::Platform CLApp::getPlatform() {
+#if PLATFORM_osx
+	CGLContextObj kCGLContext = CGLGetCurrentContext();	// GL Context
+	CGLShareGroupObj kCGLShareGroup = CGLGetShareGroup(kCGLContext); // Share Group
+	cl_context_properties properties[] = {
+		CL_CONTEXT_PROPERTY_USE_CGL_SHAREGROUP_APPLE, (cl_context_properties)kCGLShareGroup,
+		CL_CONTEXT_PLATFORM, (cl_context_properties)platform(),
+		0
+	};
+#endif
+#if PLATFORM_windows
+	cl_context_properties properties[] = {
+		CL_GL_CONTEXT_KHR, (cl_context_properties)wglGetCurrentContext(), // HGLRC handle
+		CL_WGL_HDC_KHR, (cl_context_properties)wglGetCurrentDC(), // HDC handle
+		CL_CONTEXT_PLATFORM, (cl_context_properties)cpPlatform, 
+		0
+	};	
+#endif
+	context = cl::Context({device}, properties);
+	commands = cl::CommandQueue(context, device, CL_QUEUE_PROFILING_ENABLE);
+}
+
+cl::Platform CLCommon::getPlatform() {
 	std::vector<cl::Platform> platforms;
 	cl::Platform::get(&platforms);
 
@@ -138,7 +160,7 @@ struct DeviceParameterQueryEnumType_cl_device_exec_capabilities : public DeviceP
 	}
 };
 
-cl::Device CLApp::getDevice(cl::Platform platform) {
+cl::Device CLCommon::getDevice(cl::Platform platform) {
 	std::vector<cl::Device> devices;
 	platform.getDevices(useGPU ? CL_DEVICE_TYPE_GPU : CL_DEVICE_TYPE_CPU, &devices);
 
@@ -228,31 +250,6 @@ cl::Device CLApp::getDevice(cl::Platform platform) {
 	});
 	if (deviceIter == devices.end()) throw Common::Exception() << "failed to find a device capable of GL sharing";
 	return *deviceIter;
-}
-
-void CLApp::init() {
-	platform = getPlatform();
-	device = getDevice(platform);
-
-#if PLATFORM_osx
-	CGLContextObj kCGLContext = CGLGetCurrentContext();	// GL Context
-	CGLShareGroupObj kCGLShareGroup = CGLGetShareGroup(kCGLContext); // Share Group
-	cl_context_properties properties[] = {
-		CL_CONTEXT_PROPERTY_USE_CGL_SHAREGROUP_APPLE, (cl_context_properties)kCGLShareGroup,
-		CL_CONTEXT_PLATFORM, (cl_context_properties)platform(),
-		0
-	};
-#endif
-#if PLATFORM_windows
-	cl_context_properties properties[] = {
-		CL_GL_CONTEXT_KHR, (cl_context_properties)wglGetCurrentContext(), // HGLRC handle
-		CL_WGL_HDC_KHR, (cl_context_properties)wglGetCurrentDC(), // HDC handle
-		CL_CONTEXT_PLATFORM, (cl_context_properties)cpPlatform, 
-		0
-	};	
-#endif
-	context = cl::Context({device}, properties);
-	commands = cl::CommandQueue(context, device, CL_QUEUE_PROFILING_ENABLE);
 }
 
 };
