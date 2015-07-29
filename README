@@ -1,10 +1,5 @@
 Shared library for apps that need to use OpenCL.
-This is unfortunately dependent on GLApp as well.  
-I might pick out the diamond inheritence stuff and allow for dual inheritence
- or make this completely traits-driven
-  but in the mean time I'll stick with that restriction.
 
 Depends on:
 - Common
-- GLApp
 - Tensor
