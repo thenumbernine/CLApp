@@ -9,13 +9,14 @@ struct CLCommon {
 	//whether we want to request the GPU or CPU.
 	//only used by getDevice() which is called at construction
 	bool useGPU;	
-	
+	bool verbose;
+
 	cl::Platform platform;
 	cl::Device device;
 	cl::Context context;
 	cl::CommandQueue commands;
 
-	CLCommon(bool useGPU_ = true);
+	CLCommon(bool useGPU_ = true, bool verbose_ = false);
 	virtual cl::Platform getPlatform();
 	virtual cl::Device getDevice(cl::Platform platform);
 };

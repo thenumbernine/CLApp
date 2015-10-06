@@ -4,12 +4,17 @@
 #include <iostream>
 #include <sstream>
 
+#if PLATFORM_osx
+#include <OpenGL/CGLCurrent.h>
+#endif
+
 #define PAIR(x)	x, #x
 
 namespace CLCommon {
 
-CLCommon::CLCommon(bool useGPU_)
+CLCommon::CLCommon(bool useGPU_, bool verbose_)
 : useGPU(useGPU_)
+, verbose(verbose_)
 {
 	platform = getPlatform();
 	device = getDevice(platform);
@@ -39,21 +44,23 @@ cl::Platform CLCommon::getPlatform() {
 	std::vector<cl::Platform> platforms;
 	cl::Platform::get(&platforms);
 
-	for(cl::Platform &platform : platforms) {
-		std::cout << "platform " << platform() << std::endl;
-		std::vector<std::pair<cl_uint, const char *>> queries = {
-			std::pair<cl_uint, const char *>(PAIR(CL_PLATFORM_NAME)),
-			std::pair<cl_uint, const char *>(PAIR(CL_PLATFORM_VENDOR)),
-			std::pair<cl_uint, const char *>(PAIR(CL_PLATFORM_VERSION)),
-			std::pair<cl_uint, const char *>(PAIR(CL_PLATFORM_PROFILE)),
-			std::pair<cl_uint, const char *>(PAIR(CL_PLATFORM_EXTENSIONS)),
-		};
-		for (std::pair<cl_uint, const char *> &query : queries) {
-			std::string param;
-			platform.getInfo(query.first, &param);
-			std::cout << query.second << ":\t" << param << std::endl;
+	if (verbose) {
+		for(cl::Platform &platform : platforms) {
+			std::cout << "platform " << platform() << std::endl;
+			std::vector<std::pair<cl_uint, const char *>> queries = {
+				std::pair<cl_uint, const char *>(PAIR(CL_PLATFORM_NAME)),
+				std::pair<cl_uint, const char *>(PAIR(CL_PLATFORM_VENDOR)),
+				std::pair<cl_uint, const char *>(PAIR(CL_PLATFORM_VERSION)),
+				std::pair<cl_uint, const char *>(PAIR(CL_PLATFORM_PROFILE)),
+				std::pair<cl_uint, const char *>(PAIR(CL_PLATFORM_EXTENSIONS)),
+			};
+			for (std::pair<cl_uint, const char *> &query : queries) {
+				std::string param;
+				platform.getInfo(query.first, &param);
+				std::cout << query.second << ":\t" << param << std::endl;
+			}
+			std::cout << std::endl;
 		}
-		std::cout << std::endl;
 	}
 
 	return platforms[0];
@@ -221,10 +228,12 @@ cl::Device CLCommon::getDevice(cl::Platform platform) {
 	std::vector<cl::Device>::iterator deviceIter =
 		std::find_if(devices.begin(), devices.end(), [&](cl::Device device)
 	{
-		std::cout << "device " << device() << std::endl;
-		for (std::shared_ptr<DeviceParameterQuery> query : deviceParameters) {
-			query->query(device);
-			std::cout << query->name << ":\t" << query->tostring() << std::endl;
+		if (verbose) {
+			std::cout << "device " << device() << std::endl;
+			for (std::shared_ptr<DeviceParameterQuery> query : deviceParameters) {
+				query->query(device);
+				std::cout << query->name << ":\t" << query->tostring() << std::endl;
+			}
 		}
 
 		std::string extensionStr = device.getInfo<CL_DEVICE_EXTENSIONS>();
@@ -233,11 +242,13 @@ cl::Device CLCommon::getDevice(cl::Platform platform) {
 		std::vector<std::string> extensions;
 		std::copy(std::istream_iterator<std::string>(iss), std::istream_iterator<std::string>(), std::back_inserter<std::vector<std::string>>(extensions));
 
-		std::cout << "CL_DEVICE_EXTENSIONS:" << std::endl;
-		for (std::string &s : extensions) {
-			std::cout << "\t" << s << std::endl;
+		if (verbose) {
+			std::cout << "CL_DEVICE_EXTENSIONS:" << std::endl;
+			for (std::string &s : extensions) {
+				std::cout << "\t" << s << std::endl;
+			}
+			std::cout << std::endl;
 		}
-		std::cout << std::endl;
 
 		std::vector<std::string>::iterator extension = 
 			std::find_if(extensions.begin(), extensions.end(), [&](const std::string &s)
