@@ -12,12 +12,15 @@
 
 namespace CLCommon {
 
-CLCommon::CLCommon(bool useGPU_, bool verbose_)
+CLCommon::CLCommon(
+	bool useGPU_,
+	bool verbose_,
+	std::function<std::vector<cl::Device>::const_iterator(const std::vector<cl::Device>&)> pickDevice)
 : useGPU(useGPU_)
 , verbose(verbose_)
 {
 	platform = getPlatform();
-	device = getDevice(platform);
+	device = getDevice(platform, pickDevice);
 
 #if PLATFORM_osx
 	CGLContextObj kCGLContext = CGLGetCurrentContext();	// GL Context
@@ -167,7 +170,32 @@ struct DeviceParameterQueryEnumType_cl_device_exec_capabilities : public DeviceP
 	}
 };
 
-cl::Device CLCommon::getDevice(cl::Platform platform) {
+//global scope ... er, static, whatever
+std::vector<std::string> getExtensions(const cl::Device& device) {
+	std::string extensionStr = device.getInfo<CL_DEVICE_EXTENSIONS>();
+	extensionStr = std::string(extensionStr.c_str());	//remove trailing \0's *cough* AMD *cough*
+	std::istringstream iss(extensionStr);
+	
+	std::vector<std::string> extensions;
+	std::copy(std::istream_iterator<std::string>(iss), std::istream_iterator<std::string>(), std::back_inserter<std::vector<std::string>>(extensions));
+	return extensions;
+}
+
+//likewise, static
+std::vector<cl::Device>::const_iterator hasGLSharing(const std::vector<cl::Device>& devices) {
+	return std::find_if(devices.begin(), devices.end(), [&](const cl::Device& device) -> bool {
+		std::vector<std::string> extensions = getExtensions(device);
+		return std::find_if(extensions.begin(), extensions.end(), [&](const std::string &s) -> bool {
+			return s == std::string("cl_khr_gl_sharing") 	//i don't have
+				|| s == std::string("cl_APPLE_gl_sharing");	//i do have!
+		}) != extensions.end();
+	});
+}
+
+cl::Device CLCommon::getDevice(
+	cl::Platform platform,
+	std::function<std::vector<cl::Device>::const_iterator(const std::vector<cl::Device>&)> pickDevice)
+{
 	std::vector<cl::Device> devices;
 	platform.getDevices(useGPU ? CL_DEVICE_TYPE_GPU : CL_DEVICE_TYPE_CPU, &devices);
 
@@ -225,41 +253,28 @@ cl::Device CLCommon::getDevice(cl::Platform platform) {
 		//std::make_shared<DeviceParameterQueryType<char*>>(CL_DEVICE_EXTENSIONS, "extensions"),
 	};
 
-	std::vector<cl::Device>::iterator deviceIter =
-		std::find_if(devices.begin(), devices.end(), [&](cl::Device device)
-	{
-		if (verbose) {
+	if (verbose) {
+		for (cl::Device device : devices) {
 			std::cout << "device " << device() << std::endl;
 			for (std::shared_ptr<DeviceParameterQuery> query : deviceParameters) {
 				query->query(device);
 				std::cout << query->name << ":\t" << query->tostring() << std::endl;
 			}
-		}
 
-		std::string extensionStr = device.getInfo<CL_DEVICE_EXTENSIONS>();
-		std::istringstream iss(extensionStr);
-		
-		std::vector<std::string> extensions;
-		std::copy(std::istream_iterator<std::string>(iss), std::istream_iterator<std::string>(), std::back_inserter<std::vector<std::string>>(extensions));
-
-		if (verbose) {
+			std::vector<std::string> extensions = getExtensions(device);
 			std::cout << "CL_DEVICE_EXTENSIONS:" << std::endl;
 			for (std::string &s : extensions) {
 				std::cout << "\t" << s << std::endl;
 			}
 			std::cout << std::endl;
 		}
+	}
 
-		std::vector<std::string>::iterator extension = 
-			std::find_if(extensions.begin(), extensions.end(), [&](const std::string &s)
-		{
-			return s == std::string("cl_khr_gl_sharing") 	//i don't have
-				|| s == std::string("cl_APPLE_gl_sharing");	//i do have!
-		});
-	 
-		return extension != extensions.end();
-	});
-	if (deviceIter == devices.end()) throw Common::Exception() << "failed to find a device capable of GL sharing";
+	//if pickDevice wasn't defined then just use the first
+	std::vector<cl::Device>::const_iterator deviceIter = pickDevice ? pickDevice(devices) : devices.begin();
+	
+	if (deviceIter == devices.end()) throw Common::Exception() << "failed to find requested device";
+	
 	return *deviceIter;
 }
 
