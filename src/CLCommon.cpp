@@ -3,6 +3,8 @@
 #include "Common/Exception.h"
 #include <iostream>
 #include <sstream>
+#include <algorithm>
+#include <memory>
 
 #if PLATFORM_osx
 #include <OpenGL/CGLCurrent.h>
@@ -35,7 +37,13 @@ CLCommon::CLCommon(
 	cl_context_properties properties[] = {
 		CL_GL_CONTEXT_KHR, (cl_context_properties)wglGetCurrentContext(), // HGLRC handle
 		CL_WGL_HDC_KHR, (cl_context_properties)wglGetCurrentDC(), // HDC handle
-		CL_CONTEXT_PLATFORM, (cl_context_properties)cpPlatform, 
+		CL_CONTEXT_PLATFORM, (cl_context_properties)platform(), 
+		0
+	};	
+#endif
+#if PLATFORM_linux
+	cl_context_properties properties[] = {
+		CL_CONTEXT_PLATFORM, (cl_context_properties)platform(), 
 		0
 	};	
 #endif
