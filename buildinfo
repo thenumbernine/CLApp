@@ -1,0 +1,9 @@
+distName='CLCommon'
+distType='lib'
+depends:append{'../Common', '../Tensor'}
+macros:append{'__CL_ENABLE_EXCEPTIONS', '__CL_OVERRIDE_ERROR_STRINGS'}
+depend = function(cwd)
+	macros:append{'__CL_ENABLE_EXCEPTIONS', '__CL_OVERRIDE_ERROR_STRINGS'}
+	if platform == 'osx' then linkFlags = linkFlags .. ' -framework OpenCL' end
+	if platform == 'linux' then libs:insert'OpenCL' end
+end
