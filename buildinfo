@@ -2,8 +2,15 @@ distName='CLCommon'
 distType='lib'
 depends:append{'../Common', '../Tensor'}
 macros:append{'__CL_ENABLE_EXCEPTIONS', '__CL_OVERRIDE_ERROR_STRINGS'}
-depend = function(cwd)
-	macros:append{'__CL_ENABLE_EXCEPTIONS', '__CL_OVERRIDE_ERROR_STRINGS'}
-	if platform == 'osx' then linkFlags = linkFlags .. ' -framework OpenCL' end
-	if platform == 'linux' then libs:insert'OpenCL' end
+if platform == 'msvc' then
+	include:insert[["C:\Program Files (x86)\Intel\OpenCL SDK\6.1\include"]]
+	dynamicLibs:insert'opengl32.lib'
+	dynamicLibs:insert[["C:\Program Files (x86)\Intel\OpenCL SDK\6.1\lib\x64\OpenCL.lib"]]
+end
+if including then
+	if platform == 'osx' then 
+		linkFlags = linkFlags .. ' -framework OpenCL' 
+	elseif platform == 'linux' then 
+		libs:insert'OpenCL' 
+	end
 end

@@ -9,6 +9,10 @@
 #if PLATFORM_osx
 #include <OpenGL/CGLCurrent.h>
 #endif
+#if PLATFORM_msvc
+#include <windows.h>
+#include <GL/gl.h>
+#endif
 
 #define PAIR(x)	x, #x
 
@@ -33,7 +37,7 @@ CLCommon::CLCommon(
 		0
 	};
 #endif
-#if PLATFORM_windows
+#if PLATFORM_msvc
 	cl_context_properties properties[] = {
 		CL_GL_CONTEXT_KHR, (cl_context_properties)wglGetCurrentContext(), // HGLRC handle
 		CL_WGL_HDC_KHR, (cl_context_properties)wglGetCurrentDC(), // HDC handle
