@@ -1,6 +1,9 @@
 #include "CLCommon/CLCommon.h"
 #include "Tensor/Vector.h"
 #include "Common/Exception.h"
+#ifdef PLATFORM_linux	//ubuntu
+#include "bits/stream_iterator.h"
+#endif
 #include <iostream>
 #include <sstream>
 #include <algorithm>
