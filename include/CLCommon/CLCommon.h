@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Common/Meta.h"
-#include "CLCommon/cl2.hpp"
+#include "CLCommon/cl.hpp"
 #include <functional>
 #include <vector>
 
