@@ -1,7 +1,7 @@
 distName='CLCommon'
 distType='lib'
 depends:append{'../Common', '../Tensor'}
-macros:append{'__CL_ENABLE_EXCEPTIONS', '__CL_OVERRIDE_ERROR_STRINGS'}
+macros:append{'CL_HPP_TARGET_OPENCL_VERSION=200', 'CL_HPP_ENABLE_EXCEPTIONS'}
 if platform == 'msvc' then
 	include:insert[["C:\Program Files (x86)\Intel\OpenCL SDK\6.1\include"]]
 	dynamicLibs:insert'opengl32.lib'

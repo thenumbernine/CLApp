@@ -1,15 +1,7 @@
 #pragma once
 
 #include "Common/Meta.h"
-
-#ifdef PLATFORM_osx
-#include <OpenCL/cl.hpp>
-#elif PLATFORM_msvc
-#include "CL/cl.hpp"
-#else
-#include <CL/cl.hpp>
-#endif
-
+#include "CLCommon/cl2.hpp"
 #include <functional>
 #include <vector>
 
