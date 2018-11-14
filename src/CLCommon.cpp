@@ -66,11 +66,11 @@ cl::Platform CLCommon::getPlatform() {
 		for(cl::Platform &platform : platforms) {
 			std::cout << "platform " << platform() << std::endl;
 			std::vector<std::pair<cl_uint, const char *>> queries = {
-				std::pair<cl_uint, const char *>(PAIR(CL_PLATFORM_NAME)),
-				std::pair<cl_uint, const char *>(PAIR(CL_PLATFORM_VENDOR)),
-				std::pair<cl_uint, const char *>(PAIR(CL_PLATFORM_VERSION)),
-				std::pair<cl_uint, const char *>(PAIR(CL_PLATFORM_PROFILE)),
-				std::pair<cl_uint, const char *>(PAIR(CL_PLATFORM_EXTENSIONS)),
+				{PAIR(CL_PLATFORM_NAME)},
+				{PAIR(CL_PLATFORM_VENDOR)},
+				{PAIR(CL_PLATFORM_VERSION)},
+				{PAIR(CL_PLATFORM_PROFILE)},
+				{PAIR(CL_PLATFORM_EXTENSIONS)},
 			};
 			for (std::pair<cl_uint, const char *> &query : queries) {
 				std::string param;
@@ -163,14 +163,14 @@ struct DeviceParameterQueryEnumType_cl_device_fp_config : public DeviceParameter
 	using DeviceParameterQueryEnumType::DeviceParameterQueryEnumType;
 	virtual std::vector<std::pair<cl_device_fp_config, const char *>> getFlags() { 
 		return std::vector<std::pair<cl_device_fp_config, const char *>>{
-			std::pair<cl_device_fp_config, const char *>(PAIR(CL_FP_DENORM)),
-			std::pair<cl_device_fp_config, const char *>(PAIR(CL_FP_INF_NAN)),
-			std::pair<cl_device_fp_config, const char *>(PAIR(CL_FP_ROUND_TO_NEAREST)),
-			std::pair<cl_device_fp_config, const char *>(PAIR(CL_FP_ROUND_TO_ZERO)),
-			std::pair<cl_device_fp_config, const char *>(PAIR(CL_FP_ROUND_TO_INF)),
-			std::pair<cl_device_fp_config, const char *>(PAIR(CL_FP_FMA)),
-			std::pair<cl_device_fp_config, const char *>(PAIR(CL_FP_SOFT_FLOAT)),
-			std::pair<cl_device_fp_config, const char *>(PAIR(CL_FP_CORRECTLY_ROUNDED_DIVIDE_SQRT)),
+			{PAIR(CL_FP_DENORM)},
+			{PAIR(CL_FP_INF_NAN)},
+			{PAIR(CL_FP_ROUND_TO_NEAREST)},
+			{PAIR(CL_FP_ROUND_TO_ZERO)},
+			{PAIR(CL_FP_ROUND_TO_INF)},
+			{PAIR(CL_FP_FMA)},
+			{PAIR(CL_FP_SOFT_FLOAT)},
+			{PAIR(CL_FP_CORRECTLY_ROUNDED_DIVIDE_SQRT)},
 		};
 	}
 };
@@ -179,8 +179,8 @@ struct DeviceParameterQueryEnumType_cl_device_exec_capabilities : public DeviceP
 	using DeviceParameterQueryEnumType::DeviceParameterQueryEnumType;
 	virtual std::vector<std::pair<cl_device_exec_capabilities, const char *>> getFlags() { 
 		return std::vector<std::pair<cl_device_exec_capabilities, const char *>>{
-			std::pair<cl_device_exec_capabilities, const char *>(PAIR(CL_EXEC_KERNEL)),
-			std::pair<cl_device_exec_capabilities, const char *>(PAIR(CL_EXEC_NATIVE_KERNEL)),
+			{PAIR(CL_EXEC_KERNEL)},
+			{PAIR(CL_EXEC_NATIVE_KERNEL)},
 		};
 	}
 };

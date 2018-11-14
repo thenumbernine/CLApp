@@ -1,7 +1,7 @@
 #ifdef PLATFORM_osx
-#include <OpenCL/cl.h>
+#include <OpenCL/cl2.h>
 #elif PLATFORM_msvc
-#include "CL/cl.h"
+#include "CL/cl2.h"
 #else
-#include <CL/cl.h>
+#include <CL/cl2.h>
 #endif
