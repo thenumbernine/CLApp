@@ -54,7 +54,8 @@ CLCommon::CLCommon(
 		0
 	};	
 #endif
-	context = cl::Context({device}, properties);
+	std::vector<cl::Device> devices = {device};
+	context = cl::Context(devices, properties);
 	commands = cl::CommandQueue(context, device, CL_QUEUE_PROFILING_ENABLE);
 }
 
