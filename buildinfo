@@ -9,13 +9,12 @@ depends:append{'../Common', '../Tensor'}
 -- CL 2.2
 macros:append{'CL_TARGET_OPENCL_VERSION=220', 'CL_HPP_ENABLE_EXCEPTIONS', '__CL_ENABLE_EXCEPTIONS'}
 
+local clpath = os.getenv'OPENCL_ROOT' or os.getenv'INTELOCLSDKROOT'
+include:insert(clpath..'/include')
+
 if platform == 'msvc' or platform == 'clang_win' then
-	local clpath = [[C:\Program Files (x86)\Intel\OpenCL SDK\6.1]]
-	include:insert(clpath..[[\include]])
 	dynamicLibs:insert'opengl32.lib'
-	dynamicLibs:insert(clpath..[[\lib\x64\OpenCL.lib]])
-elseif platform == 'linux' then
-	include:insert'/opt/intel/opencl/include'
+	dynamicLibs:insert(clpath..'/lib/x64/OpenCL.lib')
 end
 if including then
 	if platform == 'osx' then 
