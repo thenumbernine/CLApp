@@ -47,8 +47,8 @@ struct SetArg {
 //helper functions
 template<typename... ArgList>
 inline void setArgs(cl::Kernel kernel, ArgList&&... args) {
-	typedef TypeVector<ArgList...> Args;	
-	ForLoop<0, Args::size, SetArg>::exec(kernel, std::forward<ArgList>(args)...);
+	using Args = std::tuple<ArgList...>;
+	Common::ForLoop<0, std::tuple_size_v<Args>, SetArg>::exec(kernel, std::forward<ArgList>(args)...);
 }
 
 //useful
@@ -57,5 +57,4 @@ std::vector<std::string> getExtensions(const cl::Device& device);
 //common pickDevice function...
 std::vector<cl::Device>::const_iterator hasGLSharing(const std::vector<cl::Device>&);
 
-};
-
+}
