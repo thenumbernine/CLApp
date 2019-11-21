@@ -1,7 +1,7 @@
 #include "CLCommon/CLCommon.h"
 #include "Tensor/Vector.h"
 #include "Common/Exception.h"
-#ifdef PLATFORM_LINUX	//ubuntu
+#if PLATFORM_LINUX	//ubuntu
 #include "bits/stream_iterator.h"
 #endif
 #include <iostream>
