@@ -10,7 +10,9 @@ depends:append{'../Common', '../Tensor'}
 macros:append{'CL_TARGET_OPENCL_VERSION=220', 'CL_HPP_ENABLE_EXCEPTIONS', '__CL_ENABLE_EXCEPTIONS'}
 
 local clpath = os.getenv'OPENCL_ROOT' or os.getenv'INTELOCLSDKROOT'
-include:insert(clpath..'/include')
+if clpath then
+	include:insert(clpath..'/include')
+end
 
 if platform == 'msvc' or platform == 'clang_win' then
 	dynamicLibs:insert'opengl32.lib'

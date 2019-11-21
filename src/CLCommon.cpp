@@ -1,7 +1,7 @@
 #include "CLCommon/CLCommon.h"
 #include "Tensor/Vector.h"
 #include "Common/Exception.h"
-#ifdef PLATFORM_linux	//ubuntu
+#ifdef PLATFORM_LINUX	//ubuntu
 #include "bits/stream_iterator.h"
 #endif
 #include <iostream>
@@ -9,10 +9,10 @@
 #include <algorithm>
 #include <memory>
 
-#if PLATFORM_osx
+#if PLATFORM_OSX
 #include <OpenGL/CGLCurrent.h>
 #endif
-#if PLATFORM_msvc
+#if PLATFORM_MSVC
 #include <windows.h>
 #include <GL/gl.h>
 #endif
@@ -31,7 +31,7 @@ CLCommon::CLCommon(
 	platform = getPlatform();
 	device = getDevice(platform, pickDevice);
 
-#if PLATFORM_osx
+#if PLATFORM_OSX
 	CGLContextObj kCGLContext = CGLGetCurrentContext();	// GL Context
 	CGLShareGroupObj kCGLShareGroup = CGLGetShareGroup(kCGLContext); // Share Group
 	cl_context_properties properties[] = {
@@ -40,7 +40,7 @@ CLCommon::CLCommon(
 		0
 	};
 #endif
-#if PLATFORM_msvc
+#if PLATFORM_MSVC
 	cl_context_properties properties[] = {
 		CL_GL_CONTEXT_KHR, (cl_context_properties)wglGetCurrentContext(), // HGLRC handle
 		CL_WGL_HDC_KHR, (cl_context_properties)wglGetCurrentDC(), // HDC handle
@@ -48,7 +48,7 @@ CLCommon::CLCommon(
 		0
 	};	
 #endif
-#if PLATFORM_linux
+#if PLATFORM_LINUX
 	cl_context_properties properties[] = {
 		CL_CONTEXT_PLATFORM, (cl_context_properties)platform(), 
 		0
