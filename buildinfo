@@ -7,7 +7,7 @@ depends:append{'../Common', '../Tensor'}
 -- CL 2.0
 --macros:append{'CL_HPP_TARGET_OPENCL_VERSION=200', 'CL_HPP_ENABLE_EXCEPTIONS'}
 -- CL 2.2
-macros:append{'CL_TARGET_OPENCL_VERSION=220', 'CL_HPP_ENABLE_EXCEPTIONS', '__CL_ENABLE_EXCEPTIONS'}
+macros:append{'CL_HPP_TARGET_OPENCL_VERSION=220', 'CL_TARGET_OPENCL_VERSION=220', 'CL_HPP_ENABLE_EXCEPTIONS', '__CL_ENABLE_EXCEPTIONS'}
 
 local clpath = os.getenv'OPENCL_ROOT' or os.getenv'INTELOCLSDKROOT'
 if clpath then

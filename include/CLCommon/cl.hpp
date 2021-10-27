@@ -5,7 +5,7 @@
 #elif PLATFORM_MSVC
 #include "CL/cl2.hpp"
 #else
-#include <CL/cl2.hpp>
+#include <CL/opencl.hpp>
 #endif
 
 #else	//CL_HPP_TARGET_OPENCL_VERSION
