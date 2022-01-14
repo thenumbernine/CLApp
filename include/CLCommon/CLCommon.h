@@ -24,6 +24,7 @@ struct CLCommon {
 		//TODO instead of lambda, how about a pure virtual function that the implementation needs to overload?
 		std::function<std::vector<cl::Device>::const_iterator(const std::vector<cl::Device> &)> pickDevice = std::function<std::vector<cl::Device>::const_iterator(const std::vector<cl::Device> &)>()
 	);
+	virtual ~CLCommon() {}
 	
 	virtual cl::Platform getPlatform();
 	
