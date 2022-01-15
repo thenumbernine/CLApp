@@ -10,8 +10,8 @@ namespace CLCommon {
 struct CLCommon {
 	//whether we want to request the GPU or CPU.
 	//only used by getDevice() which is called at construction
-	bool useGPU;	
-	bool verbose;
+	bool useGPU = {};
+	bool verbose = {};
 
 	cl::Platform platform;
 	cl::Device device;

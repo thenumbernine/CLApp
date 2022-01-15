@@ -44,15 +44,15 @@ CLCommon::CLCommon(
 	cl_context_properties properties[] = {
 		CL_GL_CONTEXT_KHR, (cl_context_properties)wglGetCurrentContext(), // HGLRC handle
 		CL_WGL_HDC_KHR, (cl_context_properties)wglGetCurrentDC(), // HDC handle
-		CL_CONTEXT_PLATFORM, (cl_context_properties)platform(), 
+		CL_CONTEXT_PLATFORM, (cl_context_properties)platform(),
 		0
-	};	
+	};
 #endif
 #if PLATFORM_LINUX
 	cl_context_properties properties[] = {
-		CL_CONTEXT_PLATFORM, (cl_context_properties)platform(), 
+		CL_CONTEXT_PLATFORM, (cl_context_properties)platform(),
 		0
-	};	
+	};
 #endif
 	std::vector<cl::Device> devices = {device};
 	context = cl::Context(devices, properties);
@@ -64,7 +64,7 @@ cl::Platform CLCommon::getPlatform() {
 	cl::Platform::get(&platforms);
 
 	if (verbose) {
-		for(cl::Platform &platform : platforms) {
+		for (auto & platform : platforms) {
 			std::cout << "platform " << platform() << std::endl;
 			std::vector<std::pair<cl_uint, const char *>> queries = {
 				{PAIR(CL_PLATFORM_NAME)},
@@ -162,7 +162,7 @@ struct DeviceParameterQueryEnumType : public DeviceParameterQuery {
 
 struct DeviceParameterQueryEnumType_cl_device_fp_config : public DeviceParameterQueryEnumType<cl_device_fp_config> {
 	using DeviceParameterQueryEnumType::DeviceParameterQueryEnumType;
-	virtual std::vector<std::pair<cl_device_fp_config, const char *>> getFlags() { 
+	virtual std::vector<std::pair<cl_device_fp_config, const char *>> getFlags() {
 		return std::vector<std::pair<cl_device_fp_config, const char *>>{
 			{PAIR(CL_FP_DENORM)},
 			{PAIR(CL_FP_INF_NAN)},
@@ -178,7 +178,7 @@ struct DeviceParameterQueryEnumType_cl_device_fp_config : public DeviceParameter
 
 struct DeviceParameterQueryEnumType_cl_device_exec_capabilities : public DeviceParameterQueryEnumType<cl_device_exec_capabilities> {
 	using DeviceParameterQueryEnumType::DeviceParameterQueryEnumType;
-	virtual std::vector<std::pair<cl_device_exec_capabilities, const char *>> getFlags() { 
+	virtual std::vector<std::pair<cl_device_exec_capabilities, const char *>> getFlags() {
 		return std::vector<std::pair<cl_device_exec_capabilities, const char *>>{
 			{PAIR(CL_EXEC_KERNEL)},
 			{PAIR(CL_EXEC_NATIVE_KERNEL)},
@@ -227,7 +227,7 @@ cl::Device CLCommon::getDevice(
 		std::make_shared<DeviceParameterQueryType<cl_uint>>(PAIR(CL_DEVICE_MAX_CLOCK_FREQUENCY)),
 		std::make_shared<DeviceParameterQueryType<cl_uint>>(PAIR(CL_DEVICE_MAX_COMPUTE_UNITS)),
 		std::make_shared<DeviceParameterQueryType<cl_device_type>>(PAIR(CL_DEVICE_TYPE)),
-		std::make_shared<DeviceParameterQueryEnumType_cl_device_fp_config>(PAIR(CL_DEVICE_ADDRESS_BITS)),	//bitflags: 
+		std::make_shared<DeviceParameterQueryEnumType_cl_device_fp_config>(PAIR(CL_DEVICE_ADDRESS_BITS)),	//bitflags:
 		std::make_shared<DeviceParameterQueryEnumType_cl_device_fp_config>(PAIR(CL_DEVICE_HALF_FP_CONFIG)),
 		std::make_shared<DeviceParameterQueryEnumType_cl_device_fp_config>(PAIR(CL_DEVICE_SINGLE_FP_CONFIG)),
 		std::make_shared<DeviceParameterQueryType<cl_bool>>(PAIR(CL_DEVICE_ENDIAN_LITTLE)),
@@ -295,4 +295,3 @@ cl::Device CLCommon::getDevice(
 }
 
 };
-
