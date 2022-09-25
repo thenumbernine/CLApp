@@ -1,11 +1,11 @@
 #if defined(CL_HPP_TARGET_OPENCL_VERSION) && CL_HPP_TARGET_OPENCL_VERSION>=200
 
 #if PLATFORM_OSX
-#include <OpenCL/cl2.hpp>
+#include <OpenCL/opencl.hpp>
 #elif PLATFORM_MSVC
-#include "CL/cl2.hpp"
+#include "CL/opencl.hpp"
 #else
-#include <CL/cl2.hpp>
+#include <CL/opencl.hpp>
 #endif
 
 #else	//CL_HPP_TARGET_OPENCL_VERSION
