@@ -86,10 +86,11 @@ cl::Platform CLCommon::getPlatform() {
 }
 
 struct DeviceParameterQuery {
-	cl_uint param;
-	const char *name;
-	bool failed;
-	DeviceParameterQuery(cl_uint param_, const char *name_) : param(param_), name(name_), failed(false) {}
+	cl_uint param = {};
+	char const * name = {};
+	bool failed = {};
+	constexpr DeviceParameterQuery(cl_uint param_, const char *name_) : param(param_), name(name_) {}
+	constexpr virtual ~DeviceParameterQuery() {}
 	virtual void query(cl::Device device) = 0;
 	std::string tostring() {
 		if (failed) return "-failed-";
@@ -100,8 +101,9 @@ struct DeviceParameterQuery {
 
 template<typename Type>
 struct DeviceParameterQueryType : public DeviceParameterQuery {
-	Type value;
-	DeviceParameterQueryType(cl_uint param_, const char *name_) : DeviceParameterQuery(param_, name_), value(Type()) {}
+	Type value = {};
+	constexpr DeviceParameterQueryType(cl_uint param_, const char *name_) : DeviceParameterQuery(param_, name_) {}
+	constexpr virtual ~DeviceParameterQueryType() {}
 	virtual void query(cl::Device device) {
 		try {
 			device.getInfo(param, &value);
@@ -119,7 +121,8 @@ struct DeviceParameterQueryType : public DeviceParameterQuery {
 template<>
 struct DeviceParameterQueryType<char*> : public DeviceParameterQuery {
 	std::string value;
-	DeviceParameterQueryType(cl_uint param_, const char *name_) : DeviceParameterQuery(param_, name_) {}
+	constexpr DeviceParameterQueryType(cl_uint param_, const char *name_) : DeviceParameterQuery(param_, name_) {}
+	constexpr virtual ~DeviceParameterQueryType() {}
 	virtual void query(cl::Device device) {
 		try {
 			device.getInfo(param, &value);
@@ -133,8 +136,9 @@ struct DeviceParameterQueryType<char*> : public DeviceParameterQuery {
 //has to be a class separate of DeviceParameterQueryType because some types are used with both (cl_device_fp_config is typedef'd as a cl_uint)
 template<typename Type>
 struct DeviceParameterQueryEnumType : public DeviceParameterQuery {
-	Type value;
-	DeviceParameterQueryEnumType(cl_uint param_, const char *name_) : DeviceParameterQuery(param_, name_), value(Type()) {}
+	Type value = {};
+	constexpr DeviceParameterQueryEnumType(cl_uint param_, const char *name_) : DeviceParameterQuery(param_, name_) {}
+	constexpr virtual ~DeviceParameterQueryEnumType() {}
 	virtual void query(cl::Device device) {
 		try {
 			device.getInfo(param, &value);
@@ -162,6 +166,7 @@ struct DeviceParameterQueryEnumType : public DeviceParameterQuery {
 
 struct DeviceParameterQueryEnumType_cl_device_fp_config : public DeviceParameterQueryEnumType<cl_device_fp_config> {
 	using DeviceParameterQueryEnumType::DeviceParameterQueryEnumType;
+	constexpr virtual ~DeviceParameterQueryEnumType_cl_device_fp_config () {}
 	virtual std::vector<std::pair<cl_device_fp_config, const char *>> getFlags() {
 		return std::vector<std::pair<cl_device_fp_config, const char *>>{
 			{PAIR(CL_FP_DENORM)},
@@ -178,6 +183,7 @@ struct DeviceParameterQueryEnumType_cl_device_fp_config : public DeviceParameter
 
 struct DeviceParameterQueryEnumType_cl_device_exec_capabilities : public DeviceParameterQueryEnumType<cl_device_exec_capabilities> {
 	using DeviceParameterQueryEnumType::DeviceParameterQueryEnumType;
+	constexpr virtual ~DeviceParameterQueryEnumType_cl_device_exec_capabilities () {}
 	virtual std::vector<std::pair<cl_device_exec_capabilities, const char *>> getFlags() {
 		return std::vector<std::pair<cl_device_exec_capabilities, const char *>>{
 			{PAIR(CL_EXEC_KERNEL)},
@@ -262,7 +268,8 @@ cl::Device CLCommon::getDevice(
 		std::make_shared<DeviceParameterQueryType<cl_uint>>(PAIR(CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE)),
 		std::make_shared<DeviceParameterQueryType<size_t>>(PAIR(CL_DEVICE_MAX_WORK_GROUP_SIZE)),
 		std::make_shared<DeviceParameterQueryType<cl_uint>>(PAIR(CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS)),
-		std::make_shared<DeviceParameterQueryType<Tensor::Vector<size_t,3>>>(PAIR(CL_DEVICE_MAX_WORK_ITEM_SIZES)),
+		// TODO fix this error: "temporary of non-literal type"
+		//std::make_shared<DeviceParameterQueryType<Tensor::size3>(PAIR(CL_DEVICE_MAX_WORK_ITEM_SIZES)),
 		std::make_shared<DeviceParameterQueryType<char*>>(PAIR(CL_DEVICE_PROFILE)),
 		std::make_shared<DeviceParameterQueryType<size_t>>(PAIR(CL_DEVICE_PROFILING_TIMER_RESOLUTION)),
 		std::make_shared<DeviceParameterQueryType<cl_command_queue_properties>>(PAIR(CL_DEVICE_QUEUE_PROPERTIES)),

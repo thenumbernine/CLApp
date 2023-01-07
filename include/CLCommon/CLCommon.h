@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Common/Meta.h"
+#include "Common/ForLoop.h"
 #include "CLCommon/cl.hpp"
 #include <functional>
 #include <vector>
